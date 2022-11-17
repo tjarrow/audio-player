@@ -1,31 +1,31 @@
 import burial from './audio/Burial_Archangel.mp3';
 import daniel_avery from './audio/Daniel_Avery_Lone_Swordsman.mp3';
 import dusky from './audio/Dusky_Ingrid_Is_A_Hybrid.mp3';
-import imgSrc from '../assets/images/audio-book.png';
-import imgSrc2 from '../assets/images/daily-focus.png';
+import imgSrc from '../assets/images/daily-focus.png';
+import imgSrc2 from '../assets/images/audio-book.png';
 import imgSrc3 from '../assets/images/gym-session.png';
 
 const tracks = [
     {
-        title: "Archangel",
-        artist: "Burial",
+        title: "Daily focus",
+        artist: "Find the Path of Ease & Flow",
         audioSrc: burial,
         image: imgSrc,
-        color: "#00aeb0"
+        color: "yellow"
     },
     {
-        title: "Lone Swordsman",
-        artist: "Daniel Avery",
+        title: "Audiobook",
+        artist: "Chapter 1",
         audioSrc: daniel_avery,
         image: imgSrc2,
-        color: "#ffb77a"
+        color: "blue"
     },
     {
-        title: "Ingrid Is A Hybrid",
-        artist: "Dusky",
+        title: "Gym session",
+        artist: "Tactile: 2 min",
         audioSrc: dusky,
         image: imgSrc3,
-        color: "#5f9fff"
+        color: "green"
     }
 ];
 

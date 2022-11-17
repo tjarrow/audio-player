@@ -1,15 +1,21 @@
 import AudioPlayer from "./Player";
-import tracks from "../assets/tracks-info";
-import {useState} from "react";
+import { useState } from "react";
 
 const MainMenu = () => {
 
     const [isPlayerShown, setIsPlayerShown] = useState(false);
-    const sections = ['Daily focus', 'Audio book', 'Gym session'];
+    const [currentTrackType, setCurrentTrackType] = useState(null);
+
+    const sections = ['Daily focus', 'Audiobook', 'Gym session'];
 
     const renderSections = sections.map((section) =>
-             <button onClick={() => setIsPlayerShown(true)} className='menu-block__item'>{section}</button>
+             <button onClick={() => openPlayerByType(section)} className='menu-block__item'>{section}</button>
     );
+
+    const openPlayerByType = (type) => {
+        setIsPlayerShown(true);
+        setCurrentTrackType(type);
+    }
 
     return (
         <>
@@ -19,7 +25,7 @@ const MainMenu = () => {
                     {renderSections}
                 </div>
             </>}
-            {isPlayerShown && <AudioPlayer tracks={tracks}/>}
+            {isPlayerShown && <AudioPlayer type={currentTrackType}/>}
         </>
     );
 }

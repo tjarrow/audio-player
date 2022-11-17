@@ -1,12 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import PlayerControls from "./Controls";
+import tracks from "../assets/tracks-info";
+import iconFavourite from "../assets/icons/star-empty.svg";
+import Backdrop from "./Background";
+//
+// const relevantTrack = (track, type) => {
+//     return track.type === type;
+// }
 
-const AudioPlayer = ({ tracks }) => {
+const AudioPlayer = ({type}) => {
     const [trackIndex, setTrackIndex] = useState(0);
     const [trackProgress, setTrackProgress] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
 
-    const { title, artist, color, image, audioSrc } = tracks[trackIndex];
+    const { title, artist, color, image, audioSrc } = tracks.find(({ title }) => title === type);
 
     // Refs
     const audioRef = useRef(new Audio(audioSrc));
@@ -104,37 +111,43 @@ const AudioPlayer = ({ tracks }) => {
     return (
         <div className="audio-player">
             <div className="track-info">
-                <img
-                    className="artwork"
-                    src={image}
-                    alt={`track artwork for ${title} by ${artist}`}
-                />
-                <h2 className="title">{title}</h2>
-                <h3 className="artist">{artist}</h3>
-                <PlayerControls
-                    isPlaying={isPlaying}
-                    onPrevClick={toPrevTrack}
-                    onNextClick={toNextTrack}
-                    onPlayPauseClick={setIsPlaying}
-                />
-                <input
-                    type="range"
-                    value={trackProgress}
-                    step="1"
-                    min="0"
-                    max={duration ? duration : `${duration}`}
-                    className="progress"
-                    onChange={(e) => onScrub(e.target.value)}
-                    onMouseUp={onScrubEnd}
-                    onKeyUp={onScrubEnd}
-                    style={{ background: trackStyling }}
-                />
+                <div className={'track-info-bg track-info-bg-' + color}>
+                    <img
+                        className="artwork"
+                        src={image}
+                        alt={`track artwork for ${title} by ${artist}`}
+                    />
+                </div>
+                <div className="p-4">
+                    <h2 className="title">{title}</h2>
+                    <div className='subtitle-block'>
+                        <h3 className="subtitle">{artist}</h3>
+                        <img className="icon-favourite" src={iconFavourite} alt=""/>
+                    </div>
+                    <PlayerControls
+                        isPlaying={isPlaying}
+                        onPrevClick={toPrevTrack}
+                        onNextClick={toNextTrack}
+                        onPlayPauseClick={setIsPlaying}
+                    />
+                    <div className='audio-progress-block'>
+                        <div className='current-time'></div>
+                        <input
+                            type="range"
+                            value={trackProgress}
+                            step="1"
+                            min="0"
+                            max={duration ? duration : `${duration}`}
+                            className="progress"
+                            onChange={(e) => onScrub(e.target.value)}
+                            onMouseUp={onScrubEnd}
+                            onKeyUp={onScrubEnd}
+                            style={{ background: trackStyling }}
+                        />
+                    </div>
+                    <button className={'submit-btn submit-btn-bg-' + color}>Submit</button>
+                </div>
             </div>
-            {/*<Backdrop*/}
-            {/*    trackIndex={trackIndex}*/}
-            {/*    activeColor={color}*/}
-            {/*    isPlaying={isPlaying}*/}
-            {/*/>*/}
         </div>
     );
 };
