@@ -64,9 +64,9 @@ input[type="range"] {
   width: 70%;
   margin-bottom: 36px;
   border-radius: 8px;
-  background: #3b7677;
   transition: background 0.2s ease;
   cursor: pointer;
+  accent-color: #000000;
 }
 
 .menu-header {
@@ -179,6 +179,25 @@ input[type="range"] {
   display: flex;
   justify-content: space-between;
   margin-bottom: 60px;
+}
+
+.audio-progress-block {
+  display: flex;
+  justify-content: space-around;
+  align-items: baseline;
+}
+
+.audio-loading-block {
+  color: black;
+  font-weight: 600;
+  min-height: 343px;
+  padding-top: 50%;
+}
+
+.audio-time {
+  color: black;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .icon-favourite:hover {
