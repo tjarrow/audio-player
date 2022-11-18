@@ -1,0 +1,15 @@
+.audio-controls {
+    display: flex;
+    justify-content: space-between;
+    width: 51%;
+    margin-left: 25%;
+    margin-right: 15%;
+}
+
+.audio-controls path {
+    fill: #FFF;
+}
+
+.icon-favourite:hover {
+    cursor: pointer;
+}

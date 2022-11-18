@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import PlayerControls from "./Controls";
-import tracks from "../assets/tracks-info";
 import iconStarEmpty from "../assets/icons/star-empty.svg";
 import iconStarFilled from "../assets/icons/star-filled.svg";
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import tracks from "../assets/tracks-data";
 
 const AudioPlayer = ({ audioType, isOpen }) => {
     const [isTrackFavorite, setIsTrackFavorite] = useState(false);
@@ -33,8 +33,7 @@ const AudioPlayer = ({ audioType, isOpen }) => {
         ? `${(trackProgress / duration) * 100}%`
         : "0%";
     const trackStyling = `
-    -webkit-gradient(linear, 0% 0%, 100% 0%, color-stop(${currentPercentage}, #000), color-stop(${currentPercentage}, #cecbcb))
-  `;
+    -webkit-gradient(linear, 0% 0%, 100% 0%, color-stop(${currentPercentage}, #000), color-stop(${currentPercentage}, #cecbcb))`;
     const maxReps = 6;
     const timeToUpdateReps = Math.floor(duration / maxReps);
     const startTimer = () => {
@@ -89,9 +88,9 @@ const AudioPlayer = ({ audioType, isOpen }) => {
         audioRef.current.currentTime += 10;
     };
 
-    const convertSeconds = (numOfSec) => {
-        let s = Math.trunc(numOfSec);
-        return (s - (s %= 60)) / 60 + (9 < s ? ':' : ':0') + s;
+    const formatSeconds = (numOfSec) => {
+        let secRound = Math.trunc(numOfSec);
+        return (secRound - (secRound %= 60)) / 60 + (9 < secRound ? ':' : ':0') + secRound;
     }
 
     useEffect(() => {
@@ -145,9 +144,9 @@ const AudioPlayer = ({ audioType, isOpen }) => {
     },[currentTime]);
 
     const updateTimeAndReps = () => {
-        setCurrentAudioTime(convertSeconds(currentTime));
+        setCurrentAudioTime(formatSeconds(currentTime));
         if (audioRef.current.readyState) {
-            const remainedTime = convertSeconds(duration - currentTime);
+            const remainedTime = formatSeconds(duration - currentTime);
             setRemainingAudioTime(remainedTime);
         }
 
@@ -231,7 +230,6 @@ const AudioPlayer = ({ audioType, isOpen }) => {
                             step="1"
                             min="0"
                             max={duration ? duration : `${duration}`}
-                            className="progress"
                             onChange={(e) => onScrub(e.target.value)}
                             onMouseUp={onScrubEnd}
                             onKeyUp={onScrubEnd}

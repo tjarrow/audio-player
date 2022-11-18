@@ -1,0 +1,11 @@
+.CircularProgressbar-text {
+    font-weight: bold;
+}
+
+.CircularProgressbar-trail {
+    stroke: #FFFFFF66 !important;
+}
+
+.CircularProgressbar-path {
+    stroke: #FFFFFF !important;
+}

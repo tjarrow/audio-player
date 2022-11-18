@@ -1,0 +1,23 @@
+
+.menu-header {
+    font-weight: bold;
+    margin: 3rem auto 0;
+}
+
+.menu-block {
+    width: fit-content;
+    display: flex;
+    margin: 0 auto;
+}
+
+.menu-block__item {
+    font-weight: bold;
+    background-color: #FFC524;
+    padding: 2rem;
+    margin: 1rem;
+    border-radius: 8px;
+}
+
+.menu-block__item:hover {
+    cursor: pointer;
+}
