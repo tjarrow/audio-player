@@ -1,14 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import PlayerControls from "./Controls";
 import tracks from "../assets/tracks-info";
-import iconFavourite from "../assets/icons/star-empty.svg";
+import iconStarEmpty from "../assets/icons/star-empty.svg";
+import iconStarFilled from "../assets/icons/star-filled.svg";
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const AudioPlayer = ({ type, isOpen }) => {
-    const [isTrackLoading, setIsTrackLoading] = useState(true);
+    const [isTrackFavorite, setIsTrackFavorite] = useState(false);
+    const [favoriteTracksList, setFavoriteTracksList] = useState([]);
+    const [isAddedToFavBefore, setIsAddedToFavBefore] = useState(false);
     const [playbackRateState, setPlaybackRateState] = useState(1);
     const [currentAudioTime, setCurrentAudioTime] = useState('0:00');
     const [remainingAudioTime, setRemainingAudioTime] = useState('--:--');
@@ -26,17 +29,6 @@ const AudioPlayer = ({ type, isOpen }) => {
 
     currentTime = Math.floor(currentTime);
     // const currentRate = audioRef.current
-
-    // useEffect(() => {
-    //     if (type === 'Audiobook') {
-    //         const lastSavedTime = JSON.parse(localStorage.getItem('audioPausedTime'));
-    //         console.log('lastSavedTime: ', lastSavedTime);
-    //         if (lastSavedTime) {
-    //             setCurrentAudioTime(lastSavedTime);
-    //             //setTrackProgress(lastSavedTime);
-    //         }
-    //     }
-    // }, []);
 
     const currentPercentage = duration
         ? `${(trackProgress / duration) * 100}%`
@@ -113,39 +105,41 @@ const AudioPlayer = ({ type, isOpen }) => {
         }
     }, [isPlaying]);
 
-    // Handles cleanup and setup when changing tracks
+    const checkIfTrackIsFavorite = () => {
+        const favoriteTracks = JSON.parse(localStorage.getItem("favoriteTracks") || "[]");
+        setFavoriteTracksList(favoriteTracks);
+        const isAddedToFav = favoriteTracks.filter((track) => {
+            return track.type === type && track.title === artist
+        }).length > 0;
+
+        if (isAddedToFav) {
+            setIsAddedToFavBefore(true);
+            setIsTrackFavorite(true);
+        }
+    }
+
     useEffect(() => {
-        console.log('setup')
         audioRef.current.pause();
         audioRef.current = new Audio(audioSrc);
 
+        checkIfTrackIsFavorite();
+
         if (type === 'Audiobook') {
             const lastSavedTime = JSON.parse(localStorage.getItem('audioPausedTime'));
-            console.log('lastSavedTime: ', lastSavedTime);
             if (lastSavedTime) {
-                //setCurrentAudioTime(lastSavedTime);
                 audioRef.current.currentTime = lastSavedTime;
             }
         }
         setTrackProgress(audioRef.current.currentTime);
 
-        console.log('current time: ', audioRef.current.currentTime)
         if (isReady.current) {
             audioRef.current.play();
             setIsPlaying(true);
             startTimer();
         } else {
-            // Set the isReady ref as true for the next pass
             isReady.current = true;
         }
-    }, []);
 
-    useEffect(() => {
-        // Pause and clean up on unmount
-        return () => {
-            audioRef.current.pause();
-            clearInterval(intervalRef.current);
-        };
     }, []);
 
     useEffect(() => {
@@ -169,6 +163,20 @@ const AudioPlayer = ({ type, isOpen }) => {
         isOpen(false);
         if (type === 'Audiobook') {
             localStorage.setItem('audioPausedTime', currentTime);
+        }
+        audioRef.current.pause();
+        clearInterval(intervalRef.current);
+        if (isTrackFavorite && !isAddedToFavBefore) {
+            const favoriteTracks = [...favoriteTracksList];
+            favoriteTracks.push({type: type, title: artist})
+            localStorage.setItem('favoriteTracks', JSON.stringify(favoriteTracks));
+        }
+
+        if (!isTrackFavorite && isAddedToFavBefore) {
+            const favoriteTracks = favoriteTracksList.filter((track) => {
+                return track.type !== type && track.title !== artist
+            });
+            localStorage.setItem('favoriteTracks', JSON.stringify(favoriteTracks));
         }
     }
 
@@ -199,7 +207,14 @@ const AudioPlayer = ({ type, isOpen }) => {
                     <h2 className="title">{title}</h2>
                     <div className='subtitle-block'>
                         <h3 className="subtitle">{artist}</h3>
-                        <img className="icon-favourite" src={iconFavourite} alt=""/>
+                        <button onClick={() => setIsTrackFavorite(s => !s)}>
+                            {!isTrackFavorite &&
+                                <img className="icon-favourite" src={iconStarEmpty} alt=""/>
+                            }
+                            {isTrackFavorite &&
+                                <img className="icon-favourite" src={iconStarFilled} alt=""/>
+                            }
+                        </button>
                     </div>
                     <PlayerControls
                         isPlaying={isPlaying}
