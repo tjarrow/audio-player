@@ -91,6 +91,7 @@ input[type="range"] {
 }
 
 .audio-player {
+  position: relative;
   max-width: 414px;
   box-shadow: 0 28px 28px rgba(0, 0, 0, 0.2);
   margin: 3rem auto auto;
@@ -127,8 +128,9 @@ input[type="range"] {
 .audio-controls {
   display: flex;
   justify-content: space-between;
-  width: 50%;
-  margin: 0 auto 32px;
+  width: 51%;
+  margin-left: 25%;
+  margin-right: 15%;
 }
 
 .audio-controls .prev svg,
@@ -157,21 +159,36 @@ input[type="range"] {
   padding: 12.5px 0;
 }
 
+.submit-btn-disabled-yellow {
+  background-color: #FFE7A2;
+  color: #B3B3B3;
+}
+
+.submit-btn-disabled-green {
+  background-color: #CFF2F2;
+  color: #B3B3B3;
+}
+
+.submit-btn-disabled-blue {
+  background-color: #C8F2DE;
+  color: #B3B3B3;
+}
+
 .track-info-bg {
   min-height: 450px;
-  padding-top: 150px;
+  padding-top: 50px;
   padding-bottom: 88px;
 }
 
-.track-info-bg-yellow, .submit-btn-bg-yellow {
+.track-info-bg-yellow, .submit-btn-yellow {
   background-color: #FFC524;
 }
 
-.track-info-bg-blue, .submit-btn-bg-blue {
+.track-info-bg-blue, .submit-btn-blue {
   background-color: #82E6E6;
 }
 
-.track-info-bg-green, .submit-btn-bg-green {
+.track-info-bg-green, .submit-btn-green {
   background-color: #308c56;
 }
 
@@ -200,31 +217,41 @@ input[type="range"] {
   font-weight: 600;
 }
 
+.reps-block {
+  width: 20%;
+  margin-bottom: 3rem;
+  margin-left: 1rem;
+}
+
 .icon-favourite:hover {
   cursor: pointer;
 }
 
-.color-backdrop {
-  background: linear-gradient(45deg, var(--active-color) 20%, transparent 100%)
-  no-repeat;
+.audio-player-close {
+  color: black;
+  display: block;
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: -1;
+  right: -20px;
 }
 
-.color-backdrop.playing {
-  animation: colorChange 20s alternate infinite;
+.audio-player-close:hover {
+  cursor: pointer;
 }
 
-@keyframes colorChange {
-  from {
-    filter: hue-rotate(0deg);
-  }
-  to {
-    filter: hue-rotate(360deg);
-  }
+.audio-controls-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 32px;
 }
 
+.CircularProgressbar-text {
+  font-weight: bold;
+}
+
+.CircularProgressbar-trail {
+  stroke: #FFFFFF66 !important;
+}
+
+.CircularProgressbar-path {
+  stroke: #FFFFFF !important;
+}

@@ -8,44 +8,52 @@ const PlayerControls = ({
        isPlaying,
        onPlayPauseClick,
        onPrevClick,
-       onNextClick
+       onNextClick,
+       trackType,
+       onPlaybackRateClick,
+       playbackRate
 }) => (
-    <div className="audio-controls">
-        <button
-            type="button"
-            className="prev"
-            aria-label="Previous"
-            onClick={onPrevClick}
-        >
-            <img src={fastBackwardIcon} alt=""/>
-        </button>
-        {isPlaying ? (
+    <div className='audio-controls-wrapper'>
+        <div className="audio-controls">
             <button
                 type="button"
-                className="pause"
-                onClick={() => onPlayPauseClick(false)}
-                aria-label="Pause"
+                className="prev"
+                aria-label="Previous"
+                onClick={onPrevClick}
             >
-                <img src={pauseIcon} alt=""/>
+                <img src={fastBackwardIcon} alt=""/>
             </button>
-        ) : (
+            {isPlaying ? (
+                <button
+                    type="button"
+                    className="pause"
+                    onClick={() => onPlayPauseClick(false)}
+                    aria-label="Pause"
+                >
+                    <img src={pauseIcon} alt=""/>
+                </button>
+            ) : (
+                <button
+                    type="button"
+                    className="play"
+                    onClick={() => onPlayPauseClick(true)}
+                    aria-label="Play"
+                >
+                    <img src={playIcon} alt=""/>
+                </button>
+            )}
             <button
                 type="button"
-                className="play"
-                onClick={() => onPlayPauseClick(true)}
-                aria-label="Play"
+                className="next"
+                aria-label="Next"
+                onClick={onNextClick}
             >
-                <img src={playIcon} alt=""/>
+                <img src={fastForwardIcon} alt=""/>
             </button>
-        )}
-        <button
-            type="button"
-            className="next"
-            aria-label="Next"
-            onClick={onNextClick}
-        >
-            <img src={fastForwardIcon} alt=""/>
-        </button>
+        </div>
+        { trackType === 'Audiobook' &&
+        <button onClick={onPlaybackRateClick} className='text-black font-bold'>{playbackRate}x</button>
+        }
     </div>
 );
 

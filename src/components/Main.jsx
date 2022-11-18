@@ -25,7 +25,7 @@ const MainMenu = () => {
                     {renderSections}
                 </div>
             </>}
-            {isPlayerShown && <AudioPlayer type={currentTrackType}/>}
+            {isPlayerShown && <AudioPlayer type={currentTrackType} isOpen={setIsPlayerShown}/>}
         </>
     );
 }

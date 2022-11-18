@@ -2,24 +2,41 @@ import React, { useState, useEffect, useRef } from "react";
 import PlayerControls from "./Controls";
 import tracks from "../assets/tracks-info";
 import iconFavourite from "../assets/icons/star-empty.svg";
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const AudioPlayer = ({type}) => {
+const AudioPlayer = ({ type, isOpen }) => {
     const [isTrackLoading, setIsTrackLoading] = useState(true);
-    const [currentAudioTime, setCurrentAudioTime] = useState(null);
-    const [remainingAudioTime, setRemainingAudioTime] = useState(null);
-    const [trackIndex, setTrackIndex] = useState(0);
+    const [playbackRateState, setPlaybackRateState] = useState(1);
+    const [currentAudioTime, setCurrentAudioTime] = useState('0:00');
+    const [remainingAudioTime, setRemainingAudioTime] = useState('--:--');
+    const [currentRepsValue, setCurrentRepsValue] = useState(0);
     const [trackProgress, setTrackProgress] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
 
     const { title, artist, color, image, audioSrc } = tracks.find(({ title }) => title === type);
 
-    // Refs
     const audioRef = useRef(new Audio(audioSrc));
     const intervalRef = useRef();
     const isReady = useRef(false);
 
-    // Destructure for conciseness
-    const { duration } = audioRef.current;
+    let { duration, currentTime } = audioRef.current;
+
+    currentTime = Math.floor(currentTime);
+    // const currentRate = audioRef.current
+
+    // useEffect(() => {
+    //     if (type === 'Audiobook') {
+    //         const lastSavedTime = JSON.parse(localStorage.getItem('audioPausedTime'));
+    //         console.log('lastSavedTime: ', lastSavedTime);
+    //         if (lastSavedTime) {
+    //             setCurrentAudioTime(lastSavedTime);
+    //             //setTrackProgress(lastSavedTime);
+    //         }
+    //     }
+    // }, []);
 
     const currentPercentage = duration
         ? `${(trackProgress / duration) * 100}%`
@@ -27,9 +44,9 @@ const AudioPlayer = ({type}) => {
     const trackStyling = `
     -webkit-gradient(linear, 0% 0%, 100% 0%, color-stop(${currentPercentage}, #000), color-stop(${currentPercentage}, #cecbcb))
   `;
-
+    const maxReps = 6;
+    const timeToUpdateReps = Math.floor(duration / maxReps);
     const startTimer = () => {
-        // Clear any timers already running
         clearInterval(intervalRef.current);
 
         intervalRef.current = setInterval(() => {
@@ -40,6 +57,17 @@ const AudioPlayer = ({type}) => {
             }
         }, [1000]);
     };
+
+    const switchPlaybackRate = () => {
+        const newRate = playbackRateState + 0.5;
+        if (playbackRateState === 2) {
+            setPlaybackRateState(1);
+            audioRef.current.playbackRate = 1;
+        } else {
+            setPlaybackRateState(newRate);
+            audioRef.current.playbackRate = newRate;
+        }
+    }
 
     const onScrub = (value) => {
         // Clear any timers already running
@@ -65,7 +93,6 @@ const AudioPlayer = ({type}) => {
 
     const rewindForward = () => {
         const currTime = audioRef.current.currentTime;
-        const duration = audioRef.current.duration;
         if (duration - currTime < 10) {
             audioRef.current.currentTime = duration;
         }
@@ -88,10 +115,21 @@ const AudioPlayer = ({type}) => {
 
     // Handles cleanup and setup when changing tracks
     useEffect(() => {
+        console.log('setup')
         audioRef.current.pause();
         audioRef.current = new Audio(audioSrc);
+
+        if (type === 'Audiobook') {
+            const lastSavedTime = JSON.parse(localStorage.getItem('audioPausedTime'));
+            console.log('lastSavedTime: ', lastSavedTime);
+            if (lastSavedTime) {
+                //setCurrentAudioTime(lastSavedTime);
+                audioRef.current.currentTime = lastSavedTime;
+            }
+        }
         setTrackProgress(audioRef.current.currentTime);
 
+        console.log('current time: ', audioRef.current.currentTime)
         if (isReady.current) {
             audioRef.current.play();
             setIsPlaying(true);
@@ -100,7 +138,7 @@ const AudioPlayer = ({type}) => {
             // Set the isReady ref as true for the next pass
             isReady.current = true;
         }
-    }, [trackIndex]);
+    }, []);
 
     useEffect(() => {
         // Pause and clean up on unmount
@@ -111,64 +149,89 @@ const AudioPlayer = ({type}) => {
     }, []);
 
     useEffect(() => {
-        if (audioRef.current.readyState > 0) {
-            setIsTrackLoading(false);
-        }
-    }, [audioRef.current.readyState])
+        updateTimeAndReps();
+    },[currentTime]);
 
-    useEffect(() => {
-        setCurrentAudioTime(convertSeconds(audioRef.current.currentTime));
-        const remainedTime = convertSeconds(audioRef.current.duration - audioRef.current.currentTime)
-        setRemainingAudioTime(remainedTime);
-    } ,[audioRef.current.currentTime]);
+    const updateTimeAndReps = () => {
+        setCurrentAudioTime(convertSeconds(currentTime));
+        if (audioRef.current.readyState) {
+            const remainedTime = convertSeconds(duration - currentTime);
+            setRemainingAudioTime(remainedTime);
+        }
+
+        if (currentTime / timeToUpdateReps > currentRepsValue && currentRepsValue < maxReps) {
+            const incRepsValue = currentRepsValue + 1;
+            setCurrentRepsValue(incRepsValue);
+        }
+    }
+
+    const closePlayer = () => {
+        isOpen(false);
+        if (type === 'Audiobook') {
+            localStorage.setItem('audioPausedTime', currentTime);
+        }
+    }
 
     return (
         <div className="audio-player">
+            <FontAwesomeIcon icon={faClose} className='audio-player-close' onClick={() => closePlayer()}/>
             <div className="track-info">
-                <div className='reps-block'>
-
-                </div>
                 <div className={'track-info-bg track-info-bg-' + color}>
+                    {type !== 'Audiobook' &&
+                        <div className='reps-block'>
+                            <CircularProgressbar
+                                value={currentRepsValue}
+                                maxValue={maxReps} text={`${currentRepsValue}/${maxReps} Reps`}
+                                styles={buildStyles({
+                                    textSize: '14px',
+                                    textColor: '#000',
+                                    trailColor: '#d6d6d6',
+                                })}/>
+                        </div>
+                    }
                     <img
                         className="artwork"
                         src={image}
                         alt={`track artwork for ${title} by ${artist}`}
                     />
                 </div>
-                {isTrackLoading && <div className='audio-loading-block'>Audio is loading...</div>
-                }
-                {!isTrackLoading &&
-                    <div className="p-4">
-                        <h2 className="title">{title}</h2>
-                        <div className='subtitle-block'>
-                            <h3 className="subtitle">{artist}</h3>
-                            <img className="icon-favourite" src={iconFavourite} alt=""/>
-                        </div>
-                        <PlayerControls
-                            isPlaying={isPlaying}
-                            onPrevClick={rewindBackwards}
-                            onNextClick={rewindForward}
-                            onPlayPauseClick={setIsPlaying}
-                        />
-                        <div className='audio-progress-block'>
-                            <div className='audio-time'>{currentAudioTime}</div>
-                            <input
-                                type="range"
-                                value={trackProgress}
-                                step="1"
-                                min="0"
-                                max={duration ? duration : `${duration}`}
-                                className="progress"
-                                onChange={(e) => onScrub(e.target.value)}
-                                onMouseUp={onScrubEnd}
-                                onKeyUp={onScrubEnd}
-                                style={{background: trackStyling}}
-                            />
-                            <div className='audio-time'>{remainingAudioTime}</div>
-                        </div>
-                        <button className={'submit-btn submit-btn-bg-' + color}>Submit</button>
+                <div className="p-4">
+                    <h2 className="title">{title}</h2>
+                    <div className='subtitle-block'>
+                        <h3 className="subtitle">{artist}</h3>
+                        <img className="icon-favourite" src={iconFavourite} alt=""/>
                     </div>
-                }
+                    <PlayerControls
+                        isPlaying={isPlaying}
+                        onPrevClick={rewindBackwards}
+                        onNextClick={rewindForward}
+                        onPlayPauseClick={setIsPlaying}
+                        trackType={type}
+                        onPlaybackRateClick={switchPlaybackRate}
+                        playbackRate={playbackRateState}
+                    />
+                    <div className='audio-progress-block'>
+                        <div className='audio-time'>{currentAudioTime}</div>
+                        <input
+                            type="range"
+                            value={trackProgress}
+                            step="1"
+                            min="0"
+                            max={duration ? duration : `${duration}`}
+                            className="progress"
+                            onChange={(e) => onScrub(e.target.value)}
+                            onMouseUp={onScrubEnd}
+                            onKeyUp={onScrubEnd}
+                            style={{background: trackStyling}}
+                        />
+                        <div className='audio-time'>{remainingAudioTime}</div>
+                    </div>
+                    <button className={currentRepsValue === maxReps ?
+                       'submit-btn submit-btn-' + color
+                       : 'submit-btn submit-btn-disabled-' + color }
+                       onClick={closePlayer}
+                       disabled={currentRepsValue !== maxReps}>Submit</button>
+                </div>
             </div>
         </div>
     );
