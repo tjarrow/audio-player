@@ -197,13 +197,13 @@ const AudioPlayer = ({ type, isOpen }) => {
                                 })}/>
                         </div>
                     }
-                    <img
-                        className="artwork"
+                    {type !== 'Gym session' && <img
+                        className="track-inner-image"
                         src={image}
-                        alt={`track artwork for ${title} by ${artist}`}
-                    />
+                        alt=''
+                    />}
                 </div>
-                <div className="p-4">
+                <div className="p-10">
                     <h2 className="title">{title}</h2>
                     <div className='subtitle-block'>
                         <h3 className="subtitle">{artist}</h3>

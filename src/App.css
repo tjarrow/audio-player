@@ -1,16 +1,6 @@
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+  padding: 2rem;
 }
 
 .App-header {
@@ -70,6 +60,7 @@ input[type="range"] {
 }
 
 .menu-header {
+  font-weight: bold;
   margin: 3rem auto 0;
 }
 
@@ -80,10 +71,11 @@ input[type="range"] {
 }
 
 .menu-block__item {
+  font-weight: bold;
+  background-color: #FFC524;
   padding: 2rem;
   margin: 1rem;
-  border: 1px solid;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 
 .menu-block__item:hover {
@@ -94,13 +86,8 @@ input[type="range"] {
   position: relative;
   max-width: 414px;
   box-shadow: 0 28px 28px rgba(0, 0, 0, 0.2);
-  margin: 3rem auto auto;
-  color: var(--white);
-}
-
-.artwork {
-  display: block;
   margin: auto;
+  color: var(--white);
 }
 
 .track-info {
@@ -165,19 +152,21 @@ input[type="range"] {
 }
 
 .submit-btn-disabled-green {
-  background-color: #CFF2F2;
-  color: #B3B3B3;
-}
-
-.submit-btn-disabled-blue {
   background-color: #C8F2DE;
   color: #B3B3B3;
 }
 
+.submit-btn-disabled-blue {
+  background-color: #CFF2F2;
+  color: #B3B3B3;
+}
+
 .track-info-bg {
-  min-height: 450px;
+  min-height: 478px;
   padding-top: 50px;
   padding-bottom: 88px;
+  display: flex;
+  flex-direction: column;
 }
 
 .track-info-bg-yellow, .submit-btn-yellow {
@@ -188,8 +177,20 @@ input[type="range"] {
   background-color: #82E6E6;
 }
 
-.track-info-bg-green, .submit-btn-green {
+.submit-btn-green {
   background-color: #308c56;
+}
+
+.track-info-bg-green {
+  background-image: url("./assets/images/gym-session.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.track-inner-image {
+  display: block;
+  margin: auto auto 0;
 }
 
 .subtitle-block {
@@ -218,7 +219,7 @@ input[type="range"] {
 }
 
 .reps-block {
-  width: 20%;
+  width: 65px;
   margin-bottom: 3rem;
   margin-left: 1rem;
 }
