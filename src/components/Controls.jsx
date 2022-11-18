@@ -5,28 +5,26 @@ import fastForwardIcon from "../assets/icons/icon-forward.svg";
 import fastBackwardIcon from "../assets/icons/icon-back.svg";
 
 const PlayerControls = ({
-       isPlaying,
-       onPlayPauseClick,
-       onPrevClick,
-       onNextClick,
-       trackType,
-       onPlaybackRateClick,
-       playbackRate
+   isPlaying,
+   onPlayPauseClick,
+   onRewindBackClick,
+   onRewindForwardClick,
+   trackType,
+   onPlaybackRateClick,
+   playbackRate
 }) => (
     <div className='audio-controls-wrapper'>
         <div className="audio-controls">
             <button
                 type="button"
-                className="prev"
-                aria-label="Previous"
-                onClick={onPrevClick}
+                aria-label="Rewind-back"
+                onClick={onRewindBackClick}
             >
                 <img src={fastBackwardIcon} alt=""/>
             </button>
             {isPlaying ? (
                 <button
                     type="button"
-                    className="pause"
                     onClick={() => onPlayPauseClick(false)}
                     aria-label="Pause"
                 >
@@ -35,7 +33,6 @@ const PlayerControls = ({
             ) : (
                 <button
                     type="button"
-                    className="play"
                     onClick={() => onPlayPauseClick(true)}
                     aria-label="Play"
                 >
@@ -44,9 +41,8 @@ const PlayerControls = ({
             )}
             <button
                 type="button"
-                className="next"
-                aria-label="Next"
-                onClick={onNextClick}
+                aria-label="Rewind-forward"
+                onClick={onRewindForwardClick}
             >
                 <img src={fastForwardIcon} alt=""/>
             </button>

@@ -7,22 +7,22 @@ import imgSrc3 from '../assets/images/gym-session.png';
 
 const tracks = [
     {
-        title: "Daily focus",
-        artist: "Find the Path of Ease & Flow",
+        type: "Daily focus",
+        title: "Find the Path of Ease & Flow",
         audioSrc: daily_focus,
         image: imgSrc,
         color: "yellow"
     },
     {
-        title: "Audiobook",
-        artist: "Chapter 1",
+        type: "Audiobook",
+        title: "Chapter 1",
         audioSrc: audiobook,
         image: imgSrc2,
         color: "blue"
     },
     {
-        title: "Gym session",
-        artist: "Tactile: 2 min",
+        type: "Gym session",
+        title: "Tactile: 2 min",
         audioSrc: gym_session,
         image: imgSrc3,
         color: "green"

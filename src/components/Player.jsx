@@ -8,7 +8,7 @@ import 'react-circular-progressbar/dist/styles.css';
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const AudioPlayer = ({ type, isOpen }) => {
+const AudioPlayer = ({ audioType, isOpen }) => {
     const [isTrackFavorite, setIsTrackFavorite] = useState(false);
     const [favoriteTracksList, setFavoriteTracksList] = useState([]);
     const [isAddedToFavBefore, setIsAddedToFavBefore] = useState(false);
@@ -19,7 +19,7 @@ const AudioPlayer = ({ type, isOpen }) => {
     const [trackProgress, setTrackProgress] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
 
-    const { title, artist, color, image, audioSrc } = tracks.find(({ title }) => title === type);
+    const { type, title, color, image, audioSrc } = tracks.find(({ type }) => type === audioType);
 
     const audioRef = useRef(new Audio(audioSrc));
     const intervalRef = useRef();
@@ -28,7 +28,6 @@ const AudioPlayer = ({ type, isOpen }) => {
     let { duration, currentTime } = audioRef.current;
 
     currentTime = Math.floor(currentTime);
-    // const currentRate = audioRef.current
 
     const currentPercentage = duration
         ? `${(trackProgress / duration) * 100}%`
@@ -62,7 +61,6 @@ const AudioPlayer = ({ type, isOpen }) => {
     }
 
     const onScrub = (value) => {
-        // Clear any timers already running
         clearInterval(intervalRef.current);
         audioRef.current.currentTime = value;
         setTrackProgress(audioRef.current.currentTime);
@@ -109,7 +107,7 @@ const AudioPlayer = ({ type, isOpen }) => {
         const favoriteTracks = JSON.parse(localStorage.getItem("favoriteTracks") || "[]");
         setFavoriteTracksList(favoriteTracks);
         const isAddedToFav = favoriteTracks.filter((track) => {
-            return track.type === type && track.title === artist
+            return track.type === type && track.title === title
         }).length > 0;
 
         if (isAddedToFav) {
@@ -168,13 +166,13 @@ const AudioPlayer = ({ type, isOpen }) => {
         clearInterval(intervalRef.current);
         if (isTrackFavorite && !isAddedToFavBefore) {
             const favoriteTracks = [...favoriteTracksList];
-            favoriteTracks.push({type: type, title: artist})
+            favoriteTracks.push({type: type, title: title})
             localStorage.setItem('favoriteTracks', JSON.stringify(favoriteTracks));
         }
 
         if (!isTrackFavorite && isAddedToFavBefore) {
             const favoriteTracks = favoriteTracksList.filter((track) => {
-                return track.type !== type && track.title !== artist
+                return track.type !== type && track.title !== title
             });
             localStorage.setItem('favoriteTracks', JSON.stringify(favoriteTracks));
         }
@@ -204,9 +202,9 @@ const AudioPlayer = ({ type, isOpen }) => {
                     />}
                 </div>
                 <div className="p-10">
-                    <h2 className="title">{title}</h2>
+                    <h2 className="title">{type}</h2>
                     <div className='subtitle-block'>
-                        <h3 className="subtitle">{artist}</h3>
+                        <h3 className="subtitle">{title}</h3>
                         <button onClick={() => setIsTrackFavorite(s => !s)}>
                             {!isTrackFavorite &&
                                 <img className="icon-favourite" src={iconStarEmpty} alt=""/>
@@ -218,8 +216,8 @@ const AudioPlayer = ({ type, isOpen }) => {
                     </div>
                     <PlayerControls
                         isPlaying={isPlaying}
-                        onPrevClick={rewindBackwards}
-                        onNextClick={rewindForward}
+                        onRewindBackClick={rewindBackwards}
+                        onRewindForwardClick={rewindForward}
                         onPlayPauseClick={setIsPlaying}
                         trackType={type}
                         onPlaybackRateClick={switchPlaybackRate}
